@@ -1,18 +1,14 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
 from color_app.models import Color
 from random import randint
 from django.views.generic import DetailView, ListView, CreateView
-from django.urls import reverse_lazy
+from django.urls import reverse_lazy, reverse
 from color_app.models import Color
 from color_app.forms import ColorForm
 
-#######################
-# Function Based Views
-#######################
 
-
-def home_view(request):
-    "A view function which renders the homepage"
+def home(request):
+    # renders the homepage
 
     skyblue = Color(name="skyblue", red=135, green=206, blue=250)
 
@@ -24,8 +20,8 @@ def home_view(request):
     response = render(request, 'color_app/index.html', params)
     return response
 
-def random_color_view(request):
-    "A view function which renders a random color"
+def random_color(request):
+    # renders a random color
 
     random_color = Color(
         name="random color", 
@@ -38,17 +34,24 @@ def random_color_view(request):
 
     return render(request, 'color_app/random_color.html', params)
 
-#######################
-# Class Based Views
-#######################
+def color_list(request): 
+    # renders all colors in database
 
-class ColorListView(ListView):
-    model = Color
-    template_name = "color_app/color_list.html"
-    queryset = Color.objects.order_by("name")
+    color_list = Color.objects.all()
+    params = {"color_list": color_list}
 
-class NewColorView(CreateView):
-    model = Color
-    form_class = ColorForm
-    template_name = "color_app/color_form.html"
-    success_url = reverse_lazy("color_app:color_list")
+    return render(request, 'color_app/color_list.html', params)
+
+def new_color(request):
+    # processes new color form 
+    
+    if request.method == "POST":
+        form = ColorForm(request.POST)
+        if form.is_valid():
+            form.save()
+            return redirect(reverse("color_app:color_list"))
+    else:
+        form = ColorForm()
+    
+    return render(request, "color_app/color_form.html", {"form": form})
+
