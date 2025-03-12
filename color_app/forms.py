@@ -6,7 +6,7 @@ from random import randint
 class ColorForm(ModelForm):
     class Meta:
         model = Color
-        fields = ['name', 'red', 'green', 'blue']
+        fields = ['name', 'red']
         widgets = {
             'red': ColorChannelRangeInput(),
             'green': ColorChannelRangeInput(),
