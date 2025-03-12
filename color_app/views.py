@@ -37,14 +37,14 @@ def random_color(request):
 def color_list(request): 
     # renders all colors in database
 
-    color_list = Color.objects.all()
+    color_list = Color.objects.all().order_by("name")
     params = {"color_list": color_list}
 
     return render(request, 'color_app/color_list.html', params)
 
 def new_color(request):
     # processes new color form 
-    
+
     if request.method == "POST":
         form = ColorForm(request.POST)
         if form.is_valid():
